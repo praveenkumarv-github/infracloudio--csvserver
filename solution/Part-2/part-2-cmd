@@ -1,0 +1,3 @@
+$docker-compose up -d
+$curl -o ./part-2-output http://0.0.0.0:9300
+$docker logs part2_csvserver_1 >& part-2-logs
