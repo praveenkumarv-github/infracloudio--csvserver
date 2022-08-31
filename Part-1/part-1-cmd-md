@@ -1,0 +1,42 @@
+Rough Plan :  
+
+Run the container image infracloudio/csvserver:latest - Debug
+bash script 
+  gencsv.sh -> inputFile -> chmod 744
+continer 
+  docker cp -> inputFile 
+  exec-> check the port
+  stop the container
+
+again run the contianer :
+http://localhost:9393
+printenv : CSVSERVER_BORDER = range
+
+
+============================================================================
+Commands
+===================
+
+$ docker run infracloudio/csvserver:latest
+2022/08/31 13:45:48 error while reading the file "/csvserver/inputdata": open /csvserver/inputdata: no such file or directory
+
+$ docker run --detach --name csvserver -v $(pwd)/inputFile:/csvserver/inputdata infracloudio/csvserver:latest
+$ docker exec -it csvserver bash
+
+  Inside container :
+
+  [root@45697fc3a145 csvserver]# netstat -tulpn | grep LISTEN
+  tcp6       0      0 :::9300                 :::*                    LISTEN      1/csvserver      
+
+$ docker run --detach --name csvserver -e CSVSERVER_BORDER="Orange" -p 9300:9300 -v $(pwd)/inputFile:/csvserver/inputdata infracloudio/csvserver:latest
+
+$curl -o ./part-1-output http://172.17.0.2:9300/raw
+$docker logs csvserver  >& part-1-logs
+
+============================================================================
+
+Findings / Need help:
+
+9300 LISTEN as tcp6 Protocol
+Able to access webserver via containre IP as screenshot.png
+I think csvserver applciation configure as TC6 protocol
